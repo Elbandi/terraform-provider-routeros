@@ -415,7 +415,6 @@ func ResourceRoutingBgpTemplate() *schema.Resource {
 			Description: "BGP Router ID to be used. Use the ID from the /routing/router-id configuration by " +
 				"specifying the reference name, or set the ID directly by specifying IP. Equal " +
 				"router-ids are also used to group peers into one instance.",
-			Deprecated: DeprecatedInfo("7.20"),
 		},
 		"routing_table": {
 			Type:        schema.TypeString,

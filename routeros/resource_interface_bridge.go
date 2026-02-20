@@ -42,6 +42,17 @@ func ResourceInterfaceBridge() *schema.Resource {
 				"can change depending on the port-number.",
 			DiffSuppressFunc: AlwaysPresentNotUserProvided,
 		},
+		"current_mac": {
+			Type:        schema.TypeString,
+			Computed:    true,
+			Optional:    true,
+			Description: "Shows the source of the currently used MAC address for the bridge.",
+		},
+		"current_mac_src": {
+			Type:     schema.TypeString,
+			Computed: true,
+			Optional: true,
+		},
 		KeyComment: PropCommentRw,
 		"dhcp_snooping": {
 			Type:     schema.TypeBool,
