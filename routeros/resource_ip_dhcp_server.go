@@ -89,13 +89,8 @@ func ResourceDhcpServer() *schema.Resource {
 			Description: "Use custom set of DHCP options defined in option sets menu.",
 		},
 		"dynamic_lease_identifiers": {
-			Type:        schema.TypeSet,
-			Elem:        &schema.Schema{
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice([]string{"client-id", "client-mac", "option-82"}, false),
-			},
+			Type:        schema.TypeString,
 			Optional:    true,
-			Computed:    true,
 			Description: "Dynamic lease identifier",
 		},
 		"support_broadband_tr101": {
