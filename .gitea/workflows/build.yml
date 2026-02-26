@@ -38,6 +38,10 @@ jobs:
           gpg_private_key: ${{ secrets.TERRAFORM_GPG_SIGNING_KEY }}
           passphrase: ${{ secrets.TERRAFORM_GPG_SIGN_KEY_PW }}
 
+      - name: Set Tag
+        run: |
+          echo "goreleaser_current_tag=$(git describe --match 'v*' --tags)" >> $GITHUB_ENV
+
       - name: Set up Go
         uses: actions/setup-go@v6
         with:
@@ -49,6 +53,7 @@ jobs:
           version: latest
           args: release --clean --skip=validate
         env:
+          GORELEASER_CURRENT_TAG: "${{ env.goreleaser_current_tag }}"
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           GORELEASER_FORCE_TOKEN: 'gitea'
           GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
