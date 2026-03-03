@@ -18,12 +18,12 @@ on:
       - '**'
 
 jobs:
-
   release:
-
     runs-on: ubuntu-latest
-    steps:
+    outputs:
+      current_tag: ${{ env.goreleaser_current_tag }}
 
+    steps:
       - name: Checkout
         uses: actions/checkout@v6
         with:
@@ -64,3 +64,44 @@ jobs:
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           GORELEASER_FORCE_TOKEN: 'gitea'
           GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+
+      - name: Save to cache
+        uses: actions/cache/save@v4
+        with:
+          path: dist/*
+          key: terraform-provider-routeros-${{ github.run_id }}
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: release
+
+    container:
+      image: ghcr.io/elbandi/tea/tea-runner-image:v0.12.0-22-gba64bca
+
+    steps:
+      - name: Restore cache
+        uses: actions/cache/restore@v4
+        with:
+          path: dist/*
+          key: terraform-provider-routeros-${{ github.run_id }}
+
+      - name: Login to Gitea
+        shell: bash
+        env:
+          GIT_SERVER_URL: ${{ github.server_url }}
+          GIT_SERVER_TOKEN: ${{ secrets.TOKEN }}
+        run: >-
+          tea login ls -o simple |
+          grep "$GITHUB_SERVER_URL" >/dev/null ||
+          tea login add
+          -u "$GIT_SERVER_URL"
+          -t "$GIT_SERVER_TOKEN"
+
+      - name: Publish package
+        shell: bash
+        run: >-
+          tea packages terraform publish-provider
+          --org terraform
+          --provider-name routeros
+          --provider-version ${{ needs.release.outputs.current_tag }}
+          --path dist
