@@ -97,11 +97,16 @@ jobs:
           -u "$GIT_SERVER_URL"
           -t "$GIT_SERVER_TOKEN"
 
+      - name: Normalize current_tag (remove leading v)
+        run: |
+          RAW_TAG="${{ needs.release.outputs.current_tag }}"
+          echo "current_tag=${RAW_TAG#v}" >> "$GITHUB_ENV"
+
       - name: Publish package
         shell: bash
         run: >-
           tea packages terraform publish-provider
           --org terraform
           --provider-name routeros
-          --provider-version ${{ needs.release.outputs.current_tag }}
+          --provider-version ${{ env.current_tag }}
           --path dist
