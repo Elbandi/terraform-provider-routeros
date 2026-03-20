@@ -6,7 +6,7 @@ import (
 )
 
 // ResourceDhcpServer https://help.mikrotik.com/docs/display/ROS/DHCP#DHCP-Leases
-func ResourceDhcpServer() *schema.Resource {
+func ResourceDhcpServerV1() *schema.Resource {
 	resSchema := map[string]*schema.Schema{
 		MetaResourcePath: PropResourcePath("/ip/dhcp-server"),
 		MetaId:           PropId(Id),
@@ -89,13 +89,8 @@ func ResourceDhcpServer() *schema.Resource {
 			Description: "Use custom set of DHCP options defined in option sets menu.",
 		},
 		"dynamic_lease_identifiers": {
-			Type:        schema.TypeSet,
-			Elem:        &schema.Schema{
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice([]string{"client-id", "client-mac", "option-82"}, false),
-			},
+			Type:        schema.TypeString,
 			Optional:    true,
-			Computed:    true,
 			Description: "Dynamic lease identifier",
 		},
 		"support_broadband_tr101": {
@@ -161,28 +156,17 @@ func ResourceDhcpServer() *schema.Resource {
 				"configuration without waiting for their lease to expire.",
 		},
 	}
+
 	return &schema.Resource{
 		CreateContext: DefaultCreate(resSchema),
 		ReadContext:   DefaultRead(resSchema),
 		UpdateContext: DefaultUpdate(resSchema),
 		DeleteContext: DefaultDelete(resSchema),
+
 		Importer: &schema.ResourceImporter{
-			StateContext: ImportStateCustomContext(resSchema),
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
-		Schema:        resSchema,
-		SchemaVersion: 2,
-		StateUpgraders: []schema.StateUpgrader{
-			{
-				Type:    ResourceDhcpServerV0().CoreConfigSchema().ImpliedType(),
-				Upgrade: stateMigrationNameToId(resSchema[MetaResourcePath].Default.(string)),
-				Version: 0,
-			},
-			{
-				Type:    ResourceDhcpServerV1().CoreConfigSchema().ImpliedType(),
-				Upgrade: stateMigrationScalarToList("dynamic_lease_identifiers"),
-				Version: 1,
-			},
-		},
+		Schema: resSchema,
 	}
 }
