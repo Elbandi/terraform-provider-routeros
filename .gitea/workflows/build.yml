@@ -40,7 +40,7 @@ jobs:
 
       - name: Set Tag
         run: |
-          echo "goreleaser_current_tag=$(git describe --match 'v*' --tags)" >> $GITHUB_ENV
+          echo "goreleaser_current_tag=$(git describe --match 'v*' --exclude '*-*' --tags)" >> $GITHUB_ENV
 
       - name: Set up Go
         uses: actions/setup-go@v6
