@@ -419,14 +419,6 @@ func MikrotikResourceDataToTerraform(item MikrotikItem, s map[string]*schema.Sch
 		if _, ok := s[terraformSnakeName]; !ok {
 			// For development.
 			// panic("[MikrotikResourceDataToTerraform] The field was lost during the Schema development: " + terraformSnakeName)
-			diags = append(diags, diag.Diagnostic{
-				// TODO Waiting for TestStep.ExpectWarning https://github.com/hashicorp/terraform-plugin-testing/pull/17
-				// The test response to Warnings has not yet been implemented.
-				Severity: diag.Warning,
-				Summary:  "Field '" + terraformSnakeName + "' not found in the schema",
-				Detail: fmt.Sprintf("[MikrotikResourceDataToTerraform] The field was lost during the Schema development: ▷ '%s': '%s' ◁",
-					terraformSnakeName, mikrotikValue),
-			})
 			// Catch all fields.
 			continue
 		}
@@ -509,12 +501,6 @@ func MikrotikResourceDataToTerraform(item MikrotikItem, s map[string]*schema.Sch
 					var v any
 
 					if _, ok := s[terraformSnakeName].Elem.(*schema.Resource).Schema[subFieldSnakeName]; !ok {
-						diags = append(diags, diag.Diagnostic{
-							Severity: diag.Warning,
-							Summary:  "Field '" + terraformSnakeName + "." + subFieldSnakeName + "' not found in the schema",
-							Detail: fmt.Sprintf("[MikrotikResourceDataToTerraform] the datasource Schema sub-field was lost during development: ▷ '%s.%s' ◁",
-								terraformSnakeName, subFieldSnakeName),
-						})
 						continue
 					}
 
@@ -711,12 +697,6 @@ func MikrotikResourceDataToTerraformDatasource(items *[]MikrotikItem, resourceDa
 			if _, ok := s[terraformSnakeName]; !ok {
 				// For development.
 				//panic("[MikrotikResourceDataToTerraformDatasource] the field was lost during development.: " + terraformSnakeName)
-				diags = append(diags, diag.Diagnostic{
-					Severity: diag.Warning,
-					Summary:  "Field '" + terraformSnakeName + "' not found in the schema",
-					Detail: fmt.Sprintf("[MikrotikResourceDataToTerraformDatasource] the field was lost during the Schema development: ▷ '%s': '%s' ◁",
-						terraformSnakeName, mikrotikValue),
-				})
 				// Catch all fields.
 				continue
 			}
