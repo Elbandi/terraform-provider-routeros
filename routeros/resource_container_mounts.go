@@ -8,7 +8,7 @@ import (
 func ResourceContainerMounts() *schema.Resource {
 	resSchema := map[string]*schema.Schema{
 		MetaResourcePath: PropResourcePath("/container/mounts"),
-		MetaId:           PropId(Name),
+		MetaId:           PropId(Id),
 
 		"name": {
 			Type:        schema.TypeString,
