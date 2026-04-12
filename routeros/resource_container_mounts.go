@@ -10,10 +10,27 @@ func ResourceContainerMounts() *schema.Resource {
 		MetaResourcePath: PropResourcePath("/container/mounts"),
 		MetaId:           PropId(Id),
 
-		"name": {
+		"id": {
+			Type:        schema.TypeString,
+			Computed:    true,
+			Description: "ID for the mount",
+		},
+		"disabled": {
+			Type:             schema.TypeBool,
+			Optional:         true,
+			Description:      "Whether the mount is disabled",
+			DiffSuppressFunc: AlwaysPresentNotUserProvided,
+		},
+		"list": {
 			Type:        schema.TypeString,
 			Required:    true,
-			Description: "Name of the mount.",
+			Description: "Mount list this mount is for",
+		},
+		"read_only": {
+			Type:             schema.TypeBool,
+			Optional:         true,
+			Description:      "Whether to mount read-only",
+			DiffSuppressFunc: AlwaysPresentNotUserProvided,
 		},
 		"src": {
 			Type:        schema.TypeString,
